@@ -1,7 +1,5 @@
-package com.example.HostelManagement.interfaces;
+package com.example.HostelManagement.entity;
 
-import com.example.HostelManagement.entity.Complaints;
-import com.example.HostelManagement.entity.Rooms;
 import com.example.HostelManagement.enums.Category;
 import jakarta.persistence.*;
 import lombok.*;

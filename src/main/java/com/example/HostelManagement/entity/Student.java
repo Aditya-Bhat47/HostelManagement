@@ -49,6 +49,13 @@ public class Student {
     @Column(nullable = false)
     private BigDecimal pending;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "room_id")
+    private Rooms room;
+
+    @OneToMany(mappedBy = "students")
+    private Department department;
+
     public Student(String name, String usn) {
         this.name = name;
         this.usn = usn;
@@ -66,20 +73,26 @@ public class Student {
         return admissionDate != null && getRawYear() > 4;
     }
 
-    private int getRawYear() {
+    @Transient
+    public int getRawYear() {
         int joined = academicStartYear(admissionDate.toLocalDate());
         int now = academicStartYear(LocalDate.now());
         return now - joined + 1;
     }
 
+    @Transient
     private static int academicStartYear(LocalDate date) {
         return date.getMonthValue() >= 8 ? date.getYear() : date.getYear() - 1;
     }
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "room_id")
-    private Rooms room;
-
-    @OneToMany(mappedBy = "students")
-    private Department department;
+    public Student(String name, String usn, String email, String phone, BigDecimal fees,
+                   BigDecimal pending, Rooms room) {
+        this.name = name;
+        this.usn = usn;
+        this.email = email;
+        this.phone = phone;
+        this.fees = fees;
+        this.pending = pending;
+        this.room = room;
+    }
 }

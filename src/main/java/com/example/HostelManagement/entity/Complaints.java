@@ -2,8 +2,6 @@ package com.example.HostelManagement.entity;
 
 import com.example.HostelManagement.enums.Priority;
 import com.example.HostelManagement.enums.Status;
-import com.example.HostelManagement.interfaces.GeneralComplaint;
-import com.example.HostelManagement.interfaces.MessComplaint;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
@@ -62,6 +60,4 @@ public abstract class Complaints {
         this.resolutionNote = note;
         this.resolvedAt = LocalDateTime.now();
     }
-
-
 }

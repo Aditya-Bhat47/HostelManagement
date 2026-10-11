@@ -1,2 +1,7 @@
-package com.example.HostelManagement.exceptionHandler;public class GlobalExceptionHandler {
+package com.example.HostelManagement.exceptionHandler;
+
+import org.springframework.web.bind.annotation.RestControllerAdvice;
+
+@RestControllerAdvice
+public class GlobalExceptionHandler {
 }

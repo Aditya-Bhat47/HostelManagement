@@ -1,7 +1,5 @@
-package com.example.HostelManagement.interfaces;
+package com.example.HostelManagement.entity;
 
-import com.example.HostelManagement.entity.Complaints;
-import com.example.HostelManagement.entity.MessMeal;
 import com.example.HostelManagement.enums.MessIssue;
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -21,7 +19,7 @@ public class MessComplaint extends Complaints {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "meal_id")
-    private MessMeal meal;        // which meal it was about
+    private MessMeal meal;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "menu_item_id")
