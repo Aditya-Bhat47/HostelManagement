@@ -12,6 +12,7 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.Year;
+import java.util.List;
 
 @Getter
 @Setter
@@ -23,7 +24,7 @@ public class Student {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false,unique = true)
+    @Column(nullable = false)
     private String name;
 
     @Column(nullable = false,unique = true)
@@ -36,7 +37,7 @@ public class Student {
 
     @Column(nullable = false,length = 10)
     @Pattern(regexp = "^[6-9][0-9]{9}$", message = "Enter a valid 10-digit Indian mobile number")
-    private Long phone;
+    private String phone;
 
     @CreationTimestamp
     @Column(nullable = false)
@@ -52,6 +53,7 @@ public class Student {
         this.name = name;
         this.usn = usn;
     }
+
 
     @Transient
     public int getCurrentYear() {
@@ -73,4 +75,11 @@ public class Student {
     private static int academicStartYear(LocalDate date) {
         return date.getMonthValue() >= 8 ? date.getYear() : date.getYear() - 1;
     }
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "room_id")
+    private Rooms room;
+
+    @OneToMany(mappedBy = "students")
+    private Department department;
 }
