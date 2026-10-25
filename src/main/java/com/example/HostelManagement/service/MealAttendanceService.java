@@ -3,6 +3,7 @@ package com.example.HostelManagement.service;
 import com.example.HostelManagement.entity.MealAttendance;
 import com.example.HostelManagement.entity.MessMeal;
 import com.example.HostelManagement.entity.Student;
+import com.example.HostelManagement.enums.Status;
 import com.example.HostelManagement.exceptionHandler.ResourceNotFoundexception;
 import com.example.HostelManagement.records.MealAttendanceRequest;
 import com.example.HostelManagement.records.MealAttendanceResponse;
@@ -14,6 +15,9 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+
+import java.time.LocalDateTime;
+import java.util.List;
 
 @Service
 @AllArgsConstructor
@@ -70,6 +74,72 @@ public class MealAttendanceService {
         mealAttendanceRepo.delete(mealAttendance);
         return ResponseEntity.ok("record deleted successfully");
 
+    }
+
+    public ResponseEntity<String> markMealAttendance(Long id){
+        MealAttendance mealAttendance=mealAttendanceRepo.findById(id)
+                .orElseThrow(()->new ResourceNotFoundexception("attendance not found"));
+        mealAttendance.setStatus(Status.ATTENDED);
+        mealAttendanceRepo.save(mealAttendance);
+        return ResponseEntity.ok("Attendance Marked");
+    }
+
+    public ResponseEntity<String> updateAttendanceStatus(Long id,Status status){
+        MealAttendance mealAttendance=mealAttendanceRepo.findById(id)
+                .orElseThrow(()-> new ResourceNotFoundexception("Attendane not found "));
+        mealAttendance.setStatus(status);
+        mealAttendanceRepo.save(mealAttendance);
+        return ResponseEntity.ok("Updated attendance");
+    }
+
+    public ResponseEntity<Page<MealAttendanceResponse>> getAttendanceByStudent(Long id,Pageable pageable){
+        Page<MealAttendance> mealAttendances=mealAttendanceRepo.findByStudentId(id,pageable);
+        Page<MealAttendanceResponse> responses=mealAttendances.map(this::toMealAttendanceResponse);
+        return ResponseEntity.ok(responses);
+
+    }
+
+    public ResponseEntity<Page<MealAttendanceResponse>> getAttendanceByMeal(Long id,Pageable pageable){
+        Page<MealAttendance> mealAttendances=mealAttendanceRepo.findByMealId(id,pageable);
+        Page<MealAttendanceResponse> responses=mealAttendances.map(this::toMealAttendanceResponse);
+        return ResponseEntity.ok(responses);
+    }
+
+    public ResponseEntity<Page<MealAttendanceResponse>>
+    getAttendanceForStudentOnDate(Long id,
+                                  LocalDateTime localDateTime,
+                                  Pageable pageable
+    ){
+      LocalDateTime start=localDateTime.toLocalDate().atStartOfDay();
+      LocalDateTime end=start.plusDays(1).minusNanos(1);
+
+        Page<MealAttendance> mealAttendances =
+                mealAttendanceRepo.findByStudentIdAndCheckedInAtBetween(
+                        id,
+                        start,
+                        end,
+                        pageable
+                );
+
+        Page<MealAttendanceResponse> responses =
+                mealAttendances.map(this::toMealAttendanceResponse);
+
+        return ResponseEntity.ok(responses);
+    }
+    public ResponseEntity<Boolean> hasStudentAttendedMeal(Long id){
+        boolean attended=mealAttendanceRepo.existsByStudentIdAndStatus(id,Status.ATTENDED);
+
+        return ResponseEntity.ok(attended);
+    }
+    
+    public ResponseEntity<Long> getMealAttendanceCount(){
+        Long count=mealAttendanceRepo.count();
+        return ResponseEntity.ok(count);
+    }
+
+    public ResponseEntity<List<Student>> getStudentsAttendedMeal(Long mealId){
+        List<Student> students=mealAttendanceRepo.findStudentsByMealIdAndStatus(mealId,Status.ATTENDED);
+        return ResponseEntity.ok(students);
     }
     public MealAttendance toMealAttendance(MealAttendanceRequest request,
                                            MessMeal meal,
