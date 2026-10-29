@@ -60,4 +60,9 @@ public abstract class Complaints {
         this.resolutionNote = note;
         this.resolvedAt = LocalDateTime.now();
     }
+    public void reject(String note) {
+        this.status = Status.REJECTED;
+        this.resolutionNote = note;
+        this.resolvedAt = LocalDateTime.now();
+    }
 }

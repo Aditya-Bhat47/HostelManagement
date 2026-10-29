@@ -22,4 +22,6 @@ public interface StudentRepository extends JpaRepository<Student,Long> {
     Long countByRoomId(Long id);
 
     List<Student> findByPendingGreaterThan(BigDecimal fees);
+
+
 }
